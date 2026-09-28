@@ -743,3 +743,41 @@ export function simulateFullB1Progress() {
   } catch {}
   notify();
 }
+
+export function restoreBackup(backupData) {
+  if (!backupData || typeof backupData !== 'object') {
+    throw new Error('Invalid backup data format');
+  }
+  if (backupData.settings && typeof backupData.settings === 'object') {
+    Object.assign(state.settings, backupData.settings);
+    updateSettings(backupData.settings);
+  }
+  if (backupData.progress) {
+    state.progress = backupData.progress;
+    try { localStorage.setItem('lw_prog', JSON.stringify(state.progress)); } catch {}
+  }
+  if (backupData.bookmarks) {
+    state.bookmarks = backupData.bookmarks;
+    try { localStorage.setItem('lw_bm', JSON.stringify(state.bookmarks)); } catch {}
+  }
+  if (backupData.highscores) {
+    state.highscores = backupData.highscores;
+    try { localStorage.setItem('lw_hs', JSON.stringify(state.highscores)); } catch {}
+  }
+  if (backupData.srs) {
+    state.srs = backupData.srs;
+    try { localStorage.setItem('lw_srs', JSON.stringify(state.srs)); } catch {}
+  }
+  if (backupData.activity) {
+    state.activity = backupData.activity;
+    try { localStorage.setItem('lw_act', JSON.stringify(state.activity)); } catch {}
+  }
+  if (backupData.b1ExamProgress) {
+    state.b1ExamProgress = backupData.b1ExamProgress;
+    try { localStorage.setItem('lw_b1_prog', JSON.stringify(state.b1ExamProgress)); } catch {}
+  }
+  applyThemeAndFont();
+  notify();
+  return true;
+}
+

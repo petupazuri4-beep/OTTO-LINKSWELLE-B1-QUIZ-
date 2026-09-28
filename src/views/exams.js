@@ -278,7 +278,9 @@ export function renderExams(container) {
   container.querySelectorAll('.exam-set-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       activeSetIdx = parseInt(btn.getAttribute('data-set'), 10);
-      activeTeil = 0;
+      if (activeModule !== 'sprechen' || activeTeil === 0 || activeTeil === 3) {
+        activeTeil = 0;
+      }
       if (activeLevel === 'B1') {
         const b1Sets = getB1ExamSets(t);
         const setItem = b1Sets[activeSetIdx] || b1Sets[0];
@@ -1815,7 +1817,7 @@ function renderB1SprechenTeil2(task, handleClaimPoints) {
                   <span class="text-[9px] uppercase font-mono font-black block ${isSelected ? 'text-slate-800' : 'text-slate-500 dark:text-slate-400'}">
                     Thema ${letter}
                   </span>
-                  <span class="line-clamp-1 mt-0.5">${tp.title}</span>
+                  <span class="line-clamp-1 mt-0.5">${tp.title.replace(/^Thema [AB]:\s*/, '')}</span>
                 </button>
               `;
             }).join('')}
@@ -1842,7 +1844,7 @@ function renderB1SprechenTeil2(task, handleClaimPoints) {
             <select id="exam-b1-topic-select" class="exam-b1-topic-select flex-1 bg-gray-50 dark:bg-slate-950 border border-gray-300 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl px-2.5 py-2 text-xs font-bold focus:ring-2 focus:ring-amber-400 cursor-pointer truncate">
               ${allAvailableTopics.map((tp, idx) => `
                 <option value="${tp.id}" ${currentTopic.id === tp.id ? 'selected' : ''}>
-                  ${idx + 1}. ${tp.title.replace(/^\d+\.\s*/, '')} (${tp.category || ''})
+                  ${idx + 1}. ${tp.title.replace(/^Thema [AB]:\s*/, '').replace(/^\d+\.\s*/, '')} (${tp.category || ''})
                 </option>
               `).join('')}
             </select>
@@ -1857,7 +1859,7 @@ function renderB1SprechenTeil2(task, handleClaimPoints) {
         <!-- Selected Topic Information Card -->
         <div class="p-3 bg-gray-50 dark:bg-slate-950 rounded-xl border border-gray-200 dark:border-slate-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
           <div>
-            <h4 class="text-xs sm:text-sm font-black text-slate-900 dark:text-white">${currentTopic.title}</h4>
+            <h4 class="text-xs sm:text-sm font-black text-slate-900 dark:text-white">${currentTopic.title.replace(/^Thema [AB]:\s*/, '')}</h4>
             <p class="text-[11px] text-slate-600 dark:text-slate-400 mt-0.5 italic">"${currentTopic.question}"</p>
           </div>
           <div class="flex items-center gap-2 shrink-0 text-[10px] font-mono">
@@ -2041,7 +2043,7 @@ function renderB1SlidesView(currentTopic, slide, handleClaimPoints) {
               ${slide.usefulPhrases.map((phrase) => `
                 <div class="p-2 bg-slate-950/40 rounded-xl border border-slate-800/80 flex items-center justify-between gap-2">
                   <span class="text-xs text-slate-300 font-medium">"${phrase}"</span>
-                  <button data-speech-text="${phrase}" class="exam-speak-card-btn p-1 px-2 bg-slate-800 hover:bg-slate-700 text-white text-[11px] rounded-lg cursor-pointer transition shrink-0">
+                  <button data-speech-text="${escapeAttr(phrase)}" class="exam-speak-card-btn p-1 px-2 bg-slate-800 hover:bg-slate-700 text-white text-[11px] rounded-lg cursor-pointer transition shrink-0">
                     🔊
                   </button>
                 </div>
@@ -2361,11 +2363,11 @@ function renderB1RedemittelView(handleClaimPoints) {
                     </p>
                   </div>
                   <div class="flex items-center justify-end gap-2 pt-2 border-t border-gray-100 dark:border-slate-800/80">
-                    <button data-copy-phrase="${phrase.de}" class="exam-copy-phrase-btn px-2.5 py-1 bg-gray-50 hover:bg-gray-100 dark:bg-slate-950 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 text-xs font-bold rounded-lg cursor-pointer transition flex items-center gap-1 border border-gray-200 dark:border-slate-800">
+                    <button data-copy-phrase="${escapeAttr(phrase.de)}" class="exam-copy-phrase-btn px-2.5 py-1 bg-gray-50 hover:bg-gray-100 dark:bg-slate-950 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 text-xs font-bold rounded-lg cursor-pointer transition flex items-center gap-1 border border-gray-200 dark:border-slate-800">
                       <span>📋</span>
                       <span>${t('Copy', 'Kopieren')}</span>
                     </button>
-                    <button data-speech-text="${phrase.de}" class="exam-speak-card-btn px-2.5 py-1 bg-amber-50 hover:bg-amber-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-amber-900 dark:text-amber-300 text-xs font-bold rounded-lg cursor-pointer transition flex items-center gap-1 border border-amber-200 dark:border-slate-700">
+                    <button data-speech-text="${escapeAttr(phrase.de)}" class="exam-speak-card-btn px-2.5 py-1 bg-amber-50 hover:bg-amber-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-amber-900 dark:text-amber-300 text-xs font-bold rounded-lg cursor-pointer transition flex items-center gap-1 border border-amber-200 dark:border-slate-700">
                       <span>🔊</span>
                       <span>${t('Listen', 'Anhören')}</span>
                     </button>
@@ -2611,7 +2613,7 @@ function renderB1SprechenTeil3(task, handleClaimPoints) {
                   <span class="text-[9px] uppercase font-mono font-black block ${isSelected ? 'text-slate-800' : 'text-slate-500 dark:text-slate-400'}">
                     Thema ${letter}
                   </span>
-                  <span class="line-clamp-1 mt-0.5">${tp.title}</span>
+                  <span class="line-clamp-1 mt-0.5">${tp.title.replace(/^Thema [AB]:\s*/, '')}</span>
                 </button>
               `;
             }).join('')}
@@ -2638,7 +2640,7 @@ function renderB1SprechenTeil3(task, handleClaimPoints) {
             <select id="exam-b1-topic-select" class="exam-b1-topic-select flex-1 bg-gray-50 dark:bg-slate-950 border border-gray-300 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl px-2.5 py-2 text-xs font-bold focus:ring-2 focus:ring-amber-400 cursor-pointer truncate">
               ${allAvailableTopics.map((tp, idx) => `
                 <option value="${tp.id}" ${currentTopic.id === tp.id ? 'selected' : ''}>
-                  ${idx + 1}. ${tp.title.replace(/^\d+\.\s*/, '')} (${tp.category || ''})
+                  ${idx + 1}. ${tp.title.replace(/^Thema [AB]:\s*/, '').replace(/^\d+\.\s*/, '')} (${tp.category || ''})
                 </option>
               `).join('')}
             </select>
@@ -2653,7 +2655,7 @@ function renderB1SprechenTeil3(task, handleClaimPoints) {
         <!-- Selected Topic Information Card -->
         <div class="p-3 bg-gray-50 dark:bg-slate-950 rounded-xl border border-gray-200 dark:border-slate-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
           <div>
-            <h4 class="text-xs sm:text-sm font-black text-slate-900 dark:text-white">${currentTopic.title}</h4>
+            <h4 class="text-xs sm:text-sm font-black text-slate-900 dark:text-white">${currentTopic.title.replace(/^Thema [AB]:\s*/, '')}</h4>
             <p class="text-[11px] text-slate-600 dark:text-slate-400 mt-0.5 italic">"${currentTopic.question}"</p>
           </div>
           <span class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 px-2.5 py-1 rounded-lg text-slate-700 dark:text-slate-300 font-bold text-[10px] font-mono shrink-0">
@@ -2787,11 +2789,11 @@ function renderB1SprechenTeil3(task, handleClaimPoints) {
                         <p class="text-[10.5px] text-gray-500 dark:text-slate-400 italic">${opt.en}</p>
                       </div>
                       <div class="flex items-center gap-1.5 shrink-0 self-end sm:self-center">
-                        <button data-copy-phrase="${opt.de}" class="exam-copy-phrase-btn text-xs px-2.5 py-1 bg-white hover:bg-gray-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold rounded-lg cursor-pointer transition border border-gray-200 dark:border-slate-700">
+                        <button data-copy-phrase="${escapeAttr(opt.de)}" class="exam-copy-phrase-btn text-xs px-2.5 py-1 bg-white hover:bg-gray-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold rounded-lg cursor-pointer transition border border-gray-200 dark:border-slate-700">
                           <span>📋</span>
                           <span>${t('Copy', 'Kopieren')}</span>
                         </button>
-                        <button data-speech-text="${opt.de}" class="exam-speak-card-btn text-xs px-2.5 py-1 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black rounded-lg cursor-pointer transition flex items-center gap-1 shadow-xs">
+                        <button data-speech-text="${escapeAttr(opt.de)}" class="exam-speak-card-btn text-xs px-2.5 py-1 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black rounded-lg cursor-pointer transition flex items-center gap-1 shadow-xs">
                           <span>🔊</span>
                           <span>${t('Listen', 'Anhören')}</span>
                         </button>
@@ -2848,11 +2850,11 @@ function renderB1SprechenTeil3(task, handleClaimPoints) {
                   </p>
                 </div>
                 <div class="flex items-center justify-end gap-2 pt-2 border-t border-gray-100 dark:border-slate-800/80">
-                  <button data-copy-phrase="${phrase.de}" class="exam-copy-phrase-btn px-2.5 py-1 bg-gray-50 hover:bg-gray-100 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 text-xs font-bold rounded-lg cursor-pointer transition flex items-center gap-1 border border-gray-200 dark:border-slate-800">
+                  <button data-copy-phrase="${escapeAttr(phrase.de)}" class="exam-copy-phrase-btn px-2.5 py-1 bg-gray-50 hover:bg-gray-100 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 text-xs font-bold rounded-lg cursor-pointer transition flex items-center gap-1 border border-gray-200 dark:border-slate-800">
                     <span>📋</span>
                     <span>${t('Copy', 'Kopieren')}</span>
                   </button>
-                  <button data-speech-text="${phrase.de}" class="exam-speak-card-btn px-2.5 py-1 bg-amber-50 hover:bg-amber-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-amber-900 dark:text-amber-300 text-xs font-bold rounded-lg cursor-pointer transition flex items-center gap-1 border border-amber-200 dark:border-slate-700">
+                  <button data-speech-text="${escapeAttr(phrase.de)}" class="exam-speak-card-btn px-2.5 py-1 bg-amber-50 hover:bg-amber-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-amber-900 dark:text-amber-300 text-xs font-bold rounded-lg cursor-pointer transition flex items-center gap-1 border border-amber-200 dark:border-slate-700">
                     <span>🔊</span>
                     <span>${t('Listen', 'Anhören')}</span>
                   </button>
@@ -3366,23 +3368,37 @@ function attachTaskEventListeners(container, task, handleClaimPoints) {
     });
   });
 
-  // B1 Presentation Topic Picker Tabs
+  // Centralized Helper for B1 Presentation Topic Switching
+  const switchB1Topic = (newTopicId, targetContainer) => {
+    if (!newTopicId) return;
+    const allTopics = task.allTopics || B1_SPRECHEN_TOPICS;
+    const topicIdx = allTopics.findIndex(tp => tp.id === newTopicId);
+    if (topicIdx >= 0) {
+      selectedB1SprechenTopic = newTopicId;
+      activeSetIdx = Math.floor(topicIdx / 2);
+    } else {
+      selectedB1SprechenTopic = newTopicId;
+    }
+
+    activeB1SprechenSlide = 0;
+    if (typeof window !== 'undefined' && window.speechSynthesis) {
+      try { window.speechSynthesis.cancel(); } catch (err) {}
+    }
+    if (b1IsRecording && b1SpeechRecognition) {
+      try { b1SpeechRecognition.stop(); } catch (err) {}
+      b1IsRecording = false;
+    }
+    b1SpokenTranscript = '';
+    b1SpeechWpm = 0;
+    renderExams(targetContainer);
+  };
+
+  // B1 Presentation Topic Picker Tabs (Thema A / Thema B)
   container.querySelectorAll('.exam-b1-topic-tab').forEach(btn => {
     btn.addEventListener('click', () => {
       const topicId = btn.getAttribute('data-b1-topic-id');
       if (topicId) {
-        selectedB1SprechenTopic = topicId;
-        activeB1SprechenSlide = 0;
-        if (typeof window !== 'undefined' && window.speechSynthesis) {
-          try { window.speechSynthesis.cancel(); } catch (err) {}
-        }
-        if (b1IsRecording && b1SpeechRecognition) {
-          try { b1SpeechRecognition.stop(); } catch (err) {}
-          b1IsRecording = false;
-        }
-        b1SpokenTranscript = '';
-        b1SpeechWpm = 0;
-        renderExams(container);
+        switchB1Topic(topicId, container);
       }
     });
   });
@@ -3392,18 +3408,7 @@ function attachTaskEventListeners(container, task, handleClaimPoints) {
     select.addEventListener('change', (e) => {
       const newTopicId = e.target.value;
       if (newTopicId) {
-        selectedB1SprechenTopic = newTopicId;
-        activeB1SprechenSlide = 0;
-        if (typeof window !== 'undefined' && window.speechSynthesis) {
-          try { window.speechSynthesis.cancel(); } catch (err) {}
-        }
-        if (b1IsRecording && b1SpeechRecognition) {
-          try { b1SpeechRecognition.stop(); } catch (err) {}
-          b1IsRecording = false;
-        }
-        b1SpokenTranscript = '';
-        b1SpeechWpm = 0;
-        renderExams(container);
+        switchB1Topic(newTopicId, container);
       }
     });
   });
@@ -3419,18 +3424,7 @@ function attachTaskEventListeners(container, task, handleClaimPoints) {
       if (nextIdx >= allTopics.length) nextIdx = 0;
       if (nextIdx < 0) nextIdx = allTopics.length - 1;
 
-      selectedB1SprechenTopic = allTopics[nextIdx].id;
-      activeB1SprechenSlide = 0;
-      if (typeof window !== 'undefined' && window.speechSynthesis) {
-        try { window.speechSynthesis.cancel(); } catch (err) {}
-      }
-      if (b1IsRecording && b1SpeechRecognition) {
-        try { b1SpeechRecognition.stop(); } catch (err) {}
-        b1IsRecording = false;
-      }
-      b1SpokenTranscript = '';
-      b1SpeechWpm = 0;
-      renderExams(container);
+      switchB1Topic(allTopics[nextIdx].id, container);
     });
   });
 
@@ -3463,6 +3457,8 @@ function attachTaskEventListeners(container, task, handleClaimPoints) {
             btn.innerHTML = orig;
             btn.classList.remove('text-emerald-600', 'bg-emerald-50');
           }, 1500);
+        }).catch(() => {
+          showToast(t('Copied!', 'Kopiert!'), 'success');
         });
       }
     });
@@ -3519,6 +3515,8 @@ function attachTaskEventListeners(container, task, handleClaimPoints) {
           btn.innerHTML = origContent;
           btn.classList.remove('bg-emerald-100', 'text-emerald-800');
         }, 2000);
+      }).catch(() => {
+        showToast(t('Copied!', 'Kopiert!'), 'success');
       });
     }
   });

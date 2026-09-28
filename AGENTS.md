@@ -53,7 +53,20 @@ This file serves as the permanent source of truth for the workspace. It captures
 * **Rules & Regulatory MCQ Test (Schreib-Prüfung)**: Integrated expert correspondence tests assessing comma rules, formal pronouns capitalization, and administrative preposition triggers.
 * **AI custom Composition & Essay Assessor**: Added a direct writing interface leveraging backend evaluations for real-time spelling correction, phrasing feedback, stylistic suggestions, and CEFR estimates with robust simulated fallbacks.
 
+### 9. Module 6: 70-Sentence Progressive Ladder Engine (All 15 Topics)
+* **1,050 Total Contextual Sentences**: Expanded all 15 core vocabulary domains to exactly 70 authentic German sentences each (A2/B1 CEFR level), complete with natural English translations and mapped `wordsUsed`.
+* **Standardized 10-Level Progressive Slicing**: Every topic features an even progression of 7 sentences per level (Level 1 through Level 10), unlocking at $\ge 70\%$ score.
+* **Bidirectional Quiz Engine**: Feeds 140 interactive multiple-choice translation questions per topic (German-to-English and English-to-German) with dynamic distractor generation.
+* **Modular Structure**: Located in `src/data/sentences/` with individual topic modules indexed by `src/data/sentenceExercises.js`.
+
+### 10. Module 7: B1 Sprechen 20 Themen Suite & Full System Snapshot Backup
+* **20 Themen Presentation Suite**: Robust presentation system for Goethe B1 Sprechen Teil 2 and Teil 3 with 5 standardized slides, prompt notes, Redemittel phrase bank, full speech transcripts, audio pronunciation playback, and examiner Q&A.
+* **Persistent Snapshot Backup**: All 1,050 sentences and configurations are saved to `/backup/sentenceExercises_snapshot.json`.
+* **Automated Instant Restore**: Provided `node scripts/restore_sentences.js` to immediately rebuild all sentence modules and indices in < 1 second.
+* **In-App Backup Import & Export**: UI in Settings allows one-click export and import/restore of all learner state (`progress`, `settings`, `bookmarks`, `highscores`, `srs`, `activity`, `b1ExamProgress`).
+
 ## Developer Guidance Policies
+
 * **Component Separation**: Maintain strict separation of concern. Do not overload \`App.tsx\` with visualization routines. Custom sub-views reside inside \`/src/components/*\`.
 * **State Persistence**: Sync all progress markers, highscores, bookmarks, and streaks into \`localStorage\` safely (\`lw_prog\`, \`lw_hs\`, \`lw_bookmarks\`, \`lw_streak_streak\`).
 * **Multi-Language Adaptability**: Use the responsive translation wrapper utility \`const t = (en, de) => ...\` inside rendering segments to keep German and English options beautifully in sync.

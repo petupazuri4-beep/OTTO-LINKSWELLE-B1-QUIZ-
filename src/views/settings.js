@@ -1,4 +1,4 @@
-import { state, updateSettings, t, THEMES, setTab, applyThemeAndFont } from '../state.js';
+import { state, updateSettings, t, THEMES, setTab, applyThemeAndFont, restoreBackup } from '../state.js';
 import { showToast } from '../utils/toast.js';
 
 const AVATARS = ['🎓', '🧑‍🎓', '👩‍💼', '🦊', '🦉', '🦁', '🚀', '☕', '🥨', '🧑‍💻', '👨‍🏫', '👩‍🔬'];
@@ -394,24 +394,33 @@ export function renderSettings(container) {
             </div>
           </div>
 
-          <!-- Quick Actions: Copy Git Push Command & Download Backup -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+          <!-- Quick Actions: Copy Git Push Command, Download Backup & Restore Backup -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1">
             <button
               id="copy-git-push-btn"
               type="button"
-              class="p-2.5 rounded-xl border border-gray-200 dark:border-slate-700 bg-gray-50 hover:bg-gray-100 dark:bg-slate-800/80 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 text-xs font-black transition cursor-pointer flex items-center justify-center gap-2 shadow-xs"
+              class="p-2.5 rounded-xl border border-gray-200 dark:border-slate-700 bg-gray-50 hover:bg-gray-100 dark:bg-slate-800/80 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 text-xs font-black transition cursor-pointer flex items-center justify-center gap-1.5 shadow-xs"
             >
               <span>📋</span>
-              <span>${t('Copy Git Push Command', 'Git Push-Befehl kopieren')}</span>
+              <span>${t('Copy Git Push', 'Git Push kopieren')}</span>
             </button>
             <button
               id="export-app-data-btn"
               type="button"
-              class="p-2.5 rounded-xl border border-emerald-200 dark:border-emerald-800 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/40 dark:hover:bg-emerald-900/50 text-emerald-800 dark:text-emerald-300 text-xs font-black transition cursor-pointer flex items-center justify-center gap-2 shadow-xs"
+              class="p-2.5 rounded-xl border border-emerald-200 dark:border-emerald-800 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/40 dark:hover:bg-emerald-900/50 text-emerald-800 dark:text-emerald-300 text-xs font-black transition cursor-pointer flex items-center justify-center gap-1.5 shadow-xs"
             >
               <span>💾</span>
-              <span>${t('Export Learning Backup (.json)', 'Lernstand exportieren (.json)')}</span>
+              <span>${t('Export Backup', 'Backup exportieren')}</span>
             </button>
+            <button
+              id="import-app-data-btn"
+              type="button"
+              class="p-2.5 rounded-xl border border-blue-200 dark:border-blue-800 bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/40 dark:hover:bg-blue-900/50 text-blue-800 dark:text-blue-300 text-xs font-black transition cursor-pointer flex items-center justify-center gap-1.5 shadow-xs"
+            >
+              <span>📥</span>
+              <span>${t('Restore Backup', 'Backup wiederherstellen')}</span>
+            </button>
+            <input type="file" id="import-backup-file-input" accept=".json" class="hidden" />
           </div>
 
           <!-- Step-by-Step Instructions Collapsible Box -->
@@ -653,6 +662,30 @@ git push -u origin main</pre>
     } catch (err) {
       showToast(t('Export failed: ' + err.message, 'Export fehlgeschlagen: ' + err.message), 'error');
     }
+  });
+
+  // Import / Restore Learning Backup (.json)
+  const importInput = container.querySelector('#import-backup-file-input');
+  container.querySelector('#import-app-data-btn')?.addEventListener('click', () => {
+    importInput?.click();
+  });
+
+  importInput?.addEventListener('change', (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const json = JSON.parse(event.target.result);
+        restoreBackup(json);
+        showToast(t('Backup restored successfully!', 'Backup erfolgreich wiederhergestellt!'), 'success');
+        renderSettings(container);
+      } catch (err) {
+        showToast(t('Failed to restore backup: ' + err.message, 'Wiederherstellung fehlgeschlagen: ' + err.message), 'error');
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
   });
 
   // Service Worker Cache Refresh
