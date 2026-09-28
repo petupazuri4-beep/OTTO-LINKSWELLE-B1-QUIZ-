@@ -1,0 +1,290 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+/* Custom styles for 3D flashcard flip & perspective */
+.fc-scene {
+  perspective: 1000px;
+}
+
+.fc-card {
+  transform-style: preserve-3d;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.fc-card.flipped {
+  transform: rotateY(180deg);
+}
+
+.fc-front, .fc-back {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.fc-back {
+  transform: rotateY(180deg);
+}
+
+@keyframes pulse-ring {
+  0% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.6);
+  }
+  70% {
+    box-shadow: 0 0 0 16px rgba(59, 130, 246, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+  }
+}
+
+.animate-pulse-ring {
+  animation: pulse-ring 1.5s infinite cubic-bezier(0.4, 0, 0.6, 1);
+}
+
+/* Base resets & tap highlights */
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Color Themes Variables: Light mode and Dark mode */
+:root, [data-theme="emerald"] {
+  --theme-font-sans: "Plus Jakarta Sans", system-ui, sans-serif;
+  --theme-font-heading: "Playfair Display", Georgia, serif;
+  --theme-primary: #059669;
+  --theme-primary-hover: #047857;
+  --theme-primary-light: #ecfdf5;
+  --theme-primary-border: #a7f3d0;
+  --theme-accent: #10b981;
+  --theme-text: #065f46;
+  --theme-ring: rgba(16, 185, 129, 0.35);
+  --theme-shadow: rgba(5, 150, 105, 0.16);
+  --theme-page-bg: #f8faf8;
+  --theme-card-bg: #ffffff;
+  --theme-card-border: #e2ece5;
+}
+.dark, .dark[data-theme="emerald"], [data-theme="emerald"].dark {
+  --theme-primary: #34d399;
+  --theme-primary-hover: #10b981;
+  --theme-primary-light: rgba(5, 150, 105, 0.22);
+  --theme-primary-border: rgba(52, 211, 153, 0.35);
+  --theme-accent: #6ee7b7;
+  --theme-text: #a7f3d0;
+  --theme-ring: rgba(52, 211, 153, 0.35);
+  --theme-shadow: rgba(52, 211, 153, 0.18);
+  --theme-page-bg: #06130e;
+  --theme-card-bg: #0a1b14;
+  --theme-card-border: #13392a;
+}
+
+[data-theme="sapphire"] {
+  --theme-font-sans: "Inter", system-ui, sans-serif;
+  --theme-font-heading: "Plus Jakarta Sans", system-ui, sans-serif;
+  --theme-primary: #2563eb;
+  --theme-primary-hover: #1d4ed8;
+  --theme-primary-light: #eff6ff;
+  --theme-primary-border: #bfdbfe;
+  --theme-accent: #3b82f6;
+  --theme-text: #1e40af;
+  --theme-ring: rgba(37, 99, 235, 0.35);
+  --theme-shadow: rgba(37, 99, 235, 0.16);
+  --theme-page-bg: #f7faff;
+  --theme-card-bg: #ffffff;
+  --theme-card-border: #dbeafe;
+}
+.dark[data-theme="sapphire"], [data-theme="sapphire"].dark {
+  --theme-primary: #60a5fa;
+  --theme-primary-hover: #3b82f6;
+  --theme-primary-light: rgba(37, 99, 235, 0.22);
+  --theme-primary-border: rgba(96, 165, 250, 0.35);
+  --theme-accent: #93c5fd;
+  --theme-text: #bfdbfe;
+  --theme-ring: rgba(96, 165, 250, 0.35);
+  --theme-shadow: rgba(96, 165, 250, 0.18);
+  --theme-page-bg: #070e1c;
+  --theme-card-bg: #0b1830;
+  --theme-card-border: #1a345e;
+}
+
+[data-theme="amber"] {
+  --theme-font-sans: "Outfit", system-ui, sans-serif;
+  --theme-font-heading: "Space Grotesk", sans-serif;
+  --theme-primary: #d97706;
+  --theme-primary-hover: #b45309;
+  --theme-primary-light: #fffbeb;
+  --theme-primary-border: #fde68a;
+  --theme-accent: #f59e0b;
+  --theme-text: #92400e;
+  --theme-ring: rgba(217, 119, 6, 0.35);
+  --theme-shadow: rgba(217, 119, 6, 0.16);
+  --theme-page-bg: #fffdf5;
+  --theme-card-bg: #ffffff;
+  --theme-card-border: #fef08a;
+}
+.dark[data-theme="amber"], [data-theme="amber"].dark {
+  --theme-primary: #fbbf24;
+  --theme-primary-hover: #f59e0b;
+  --theme-primary-light: rgba(217, 119, 6, 0.22);
+  --theme-primary-border: rgba(251, 191, 36, 0.35);
+  --theme-accent: #fde68a;
+  --theme-text: #fef3c7;
+  --theme-ring: rgba(251, 191, 36, 0.35);
+  --theme-shadow: rgba(251, 191, 36, 0.18);
+  --theme-page-bg: #140d02;
+  --theme-card-bg: #1e1404;
+  --theme-card-border: #422c09;
+}
+
+[data-theme="crimson"] {
+  --theme-font-sans: "Inter", system-ui, sans-serif;
+  --theme-font-heading: "Outfit", sans-serif;
+  --theme-primary: #e11d48;
+  --theme-primary-hover: #be123c;
+  --theme-primary-light: #fff1f2;
+  --theme-primary-border: #fecdd3;
+  --theme-accent: #f43f5e;
+  --theme-text: #9f1239;
+  --theme-ring: rgba(225, 29, 72, 0.35);
+  --theme-shadow: rgba(225, 29, 72, 0.16);
+  --theme-page-bg: #fff8f8;
+  --theme-card-bg: #ffffff;
+  --theme-card-border: #ffe4e6;
+}
+.dark[data-theme="crimson"], [data-theme="crimson"].dark {
+  --theme-primary: #fb7185;
+  --theme-primary-hover: #f43f5e;
+  --theme-primary-light: rgba(225, 29, 72, 0.22);
+  --theme-primary-border: rgba(251, 113, 133, 0.35);
+  --theme-accent: #fda4af;
+  --theme-text: #ffe4e6;
+  --theme-ring: rgba(251, 113, 133, 0.35);
+  --theme-shadow: rgba(251, 113, 133, 0.18);
+  --theme-page-bg: #16040b;
+  --theme-card-bg: #220912;
+  --theme-card-border: #4c1324;
+}
+
+[data-theme="amethyst"] {
+  --theme-font-sans: "Outfit", system-ui, sans-serif;
+  --theme-font-heading: "Playfair Display", Georgia, serif;
+  --theme-primary: #7c3aed;
+  --theme-primary-hover: #6d28d9;
+  --theme-primary-light: #f5f3ff;
+  --theme-primary-border: #ddd6fe;
+  --theme-accent: #8b5cf6;
+  --theme-text: #5b21b6;
+  --theme-ring: rgba(124, 58, 237, 0.35);
+  --theme-shadow: rgba(124, 58, 237, 0.16);
+  --theme-page-bg: #faf8ff;
+  --theme-card-bg: #ffffff;
+  --theme-card-border: #ede9fe;
+}
+.dark[data-theme="amethyst"], [data-theme="amethyst"].dark {
+  --theme-primary: #a78bfa;
+  --theme-primary-hover: #8b5cf6;
+  --theme-primary-light: rgba(124, 58, 237, 0.22);
+  --theme-primary-border: rgba(167, 139, 250, 0.35);
+  --theme-accent: #c4b5fd;
+  --theme-text: #ede9fe;
+  --theme-ring: rgba(167, 139, 250, 0.35);
+  --theme-shadow: rgba(167, 139, 250, 0.18);
+  --theme-page-bg: #110826;
+  --theme-card-bg: #190e38;
+  --theme-card-border: #3b1e77;
+}
+
+/* Theme Classes */
+.theme-text {
+  color: var(--theme-primary);
+}
+.theme-bg-primary {
+  background-color: var(--theme-primary) !important;
+  color: #ffffff !important;
+}
+.dark .theme-bg-primary {
+  color: #090d16 !important;
+}
+.theme-bg-light {
+  background-color: var(--theme-primary-light) !important;
+}
+.theme-border {
+  border-color: var(--theme-primary-border) !important;
+}
+.theme-badge {
+  background-color: var(--theme-primary-light) !important;
+  color: var(--theme-text) !important;
+  border: 1px solid var(--theme-primary-border) !important;
+}
+
+/* Typography & Font Application across all elements */
+h1, h2, h3, h4, .font-heading {
+  font-family: var(--theme-font-heading, var(--theme-font-sans, inherit));
+}
+
+body, #app, button, input, select, textarea {
+  font-family: var(--theme-font-sans, inherit);
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--theme-page-bg, #ffffff);
+  color: #0f172a;
+}
+
+body.dark {
+  background-color: var(--theme-page-bg, #0b0f19);
+  color: #f1f5f9;
+}
+
+/* Comprehensive Theme Elements */
+.theme-btn {
+  background-color: var(--theme-primary) !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 8px var(--theme-shadow);
+  transition: all 0.2s ease;
+}
+.theme-btn:hover {
+  background-color: var(--theme-primary-hover) !important;
+  box-shadow: 0 4px 12px var(--theme-shadow);
+}
+.dark .theme-btn {
+  color: #050811 !important;
+}
+
+.theme-card {
+  background-color: var(--theme-card-bg) !important;
+  border-color: var(--theme-card-border) !important;
+}
+
+.theme-ring-focus:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--theme-ring);
+}
+
+/* Smooth transition for theme switching */
+body, #app, nav, header {
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+/* Hide scrollbar on category ribbons */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
